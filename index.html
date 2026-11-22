@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToolBox Hub - Free Online Tools</title>
+<meta name="description" content="ToolBox Hub offers free online tools and useful downloads.">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f7fb;color:#263247}
+header{background:white;padding:18px 7%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;box-shadow:0 2px 10px #0000000a}
+.logo{font-size:24px;font-weight:bold;color:#2563eb;text-decoration:none}
+nav{display:flex;gap:22px;flex-wrap:wrap}
+nav a{color:#475569;text-decoration:none;font-size:14px}
+nav a:hover{color:#2563eb}
+.hero{text-align:center;padding:75px 20px;background:#eaf1ff}
+.hero h1{font-size:38px;color:#172554;margin-bottom:14px}
+.hero p{color:#64748b;font-size:16px;margin-bottom:25px}
+.hero a{display:inline-block;background:#2563eb;color:white;padding:13px 22px;border-radius:8px;text-decoration:none;font-weight:bold}
+.container{max-width:1100px;margin:auto;padding:45px 20px}
+.section-title{font-size:25px;margin-bottom:22px;color:#172554}
+.search{width:100%;padding:15px;border:1px solid #dbe3f0;border-radius:9px;font-size:15px;margin-bottom:25px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:17px}
+.card{background:white;padding:23px;border:1px solid #e5eaf2;border-radius:12px;text-decoration:none;color:#263247;transition:.2s}
+.card:hover{transform:translateY(-3px);border-color:#93b4f8}
+.card .emoji{font-size:30px;margin-bottom:13px}
+.card h3{font-size:17px;margin-bottom:8px}
+.card p{font-size:13px;color:#64748b;line-height:1.5}
+.download-section{background:#edf3ff}
+.download-card{background:white;padding:25px;border-radius:12px;border:1px solid #dce6fa;text-decoration:none;color:#263247;display:block}
+.download-card h3{margin-bottom:8px}
+.download-card p{color:#64748b;font-size:14px;margin-bottom:15px}
+.download-card span{color:#2563eb;font-weight:bold;font-size:14px}
+footer{background:#172554;color:white;padding:30px 20px;text-align:center}
+footer a{color:#bfdbfe;text-decoration:none;margin:0 9px;font-size:13px}
+footer p{margin-top:15px;font-size:13px;color:#cbd5e1}
+@media(max-width:600px){.hero h1{font-size:29px}header{justify-content:center}nav{justify-content:center}}
+</style>
+</head>
+
+<body>
+
+<header>
+<a class="logo" href="index.html">ToolBox Hub</a>
+<nav>
+<a href="#home">Home</a>
+<a href="#tools">Online Tools</a>
+<a href="pages/downloads.html">Downloads</a>
+<a href="#about">About</a>
+</nav>
+</header>
+
+<section class="hero" id="home">
+<h1>Free Online Tools & Resources</h1>
+<p>Simple, useful and free tools for your everyday tasks.</p>
+<a href="#tools">Explore Tools</a>
+</section>
+
+<main>
+
+<section class="container" id="tools">
+<h2 class="section-title">Online Tools</h2>
+
+<input type="search" class="search" id="search"
+placeholder="Search tools and downloads..."
+aria-label="Search tools and downloads">
+
+<div class="cards" id="toolCards">
+
+<a class="card searchable" href="tools/word-counter.html">
+<div class="emoji">📝</div>
+<h3>Word Counter</h3>
+<p>Count words, characters, sentences and paragraphs.</p>
+</a>
+
+<a class="card searchable" href="tools/percentage-calculator.html">
+<div class="emoji">📊</div>
+<h3>Percentage Calculator</h3>
+<p>Calculate percentages, increases and decreases.</p>
+</a>
+
+<a class="card searchable" href="tools/age-calculator.html">
+<div class="emoji">🎂</div>
+<h3>Age Calculator</h3>
+<p>Calculate your age in years, months and days.</p>
+</a>
+
+<a class="card searchable" href="tools/qr-generator.html">
+<div class="emoji">🔳</div>
+<h3>QR Code Generator</h3>
+<p>Create and download QR codes from text or links.</p>
+</a>
+
+<a class="card searchable" href="tools/image-compressor.html">
+<div class="emoji">🖼️</div>
+<h3>Image Compressor</h3>
+<p>Compress images directly in your browser.</p>
+</a>
+
+<a class="card searchable" href="tools/unit-converter.html">
+<div class="emoji">📏</div>
+<h3>Unit Converter</h3>
+<p>Convert length, weight, temperature and volume.</p>
+</a>
+
+</div>
+</section>
+
+<section class="download-section" id="downloads">
+<div class="container">
+<h2 class="section-title">Download Center</h2>
+
+<div class="cards">
+<a class="download-card searchable" href="pages/downloads.html">
+<div class="emoji">💻</div>
+<h3>PC Applications</h3>
+<p>Browse available computer applications.</p>
+<span>Browse Downloads →</span>
+</a>
+
+<a class="download-card searchable" href="pages/downloads.html">
+<div class="emoji">📱</div>
+<h3>Mobile Applications</h3>
+<p>Browse available mobile applications.</p>
+<span>Browse Downloads →</span>
+</a>
+
+<a class="download-card searchable" href="pages/downloads.html">
+<div class="emoji">🎬</div>
+<h3>Movies</h3>
+<p>Browse available video content.</p>
+<span>Browse Downloads →</span>
+</a>
+
+<a class="download-card searchable" href="pages/downloads.html">
+<div class="emoji">🎌</div>
+<h3>Anime</h3>
+<p>Browse available anime content.</p>
+<span>Browse Downloads →</span>
+</a>
+</div>
+</div>
+</section>
+
+<section class="container" id="about">
+<h2 class="section-title">About ToolBox Hub</h2>
+<div class="cards">
+<div class="card">
+<div class="emoji">🆓</div>
+<h3>Free Access</h3>
+<p>Useful browser-based tools without subscription fees.</p>
+</div>
+<div class="card">
+<div class="emoji">⚡</div>
+<h3>Easy to Use</h3>
+<p>Simple interfaces designed for everyday tasks.</p>
+</div>
+<div class="card">
+<div class="emoji">🛠️</div>
+<h3>Useful Resources</h3>
+<p>A central place for tools and downloadable resources.</p>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer>
+<div>
+<a href="pages/privacy-policy.html">Privacy Policy</a>
+<a href="pages/terms.html">Terms & Conditions</a>
+<a href="pages/contact.html">Contact</a>
+</div>
+<p>© <span id="year"></span> ToolBox Hub. All rights reserved.</p>
+</footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+document.getElementById("search").addEventListener("input", function(){
+    const query = this.value.toLowerCase();
+
+    document.querySelectorAll(".searchable").forEach(card => {
+        card.style.display = card.textContent.toLowerCase().includes(query)
+            ? ""
+            : "none";
+    });
+});
+</script>
+
+</body>
+</html>

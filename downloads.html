@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Download Center | ToolBox Hub</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f3f7fc;color:#172033}
+header{background:#fff;padding:20px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5eaf2}
+header h2{color:#2563eb}
+header a{color:#2563eb;text-decoration:none;font-weight:bold}
+.hero{text-align:center;padding:45px 15px 25px}
+.hero h1{font-size:34px;margin-bottom:10px}
+.hero p{color:#64748b}
+.container{max-width:1100px;margin:20px auto;padding:0 18px}
+.search{width:100%;padding:15px;border:1px solid #d5deeb;border-radius:10px;font-size:16px;margin-bottom:22px}
+.categories{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:25px}
+.category{padding:18px 10px;background:white;border:1px solid #e2e8f0;border-radius:12px;cursor:pointer;text-align:center;font-weight:bold}
+.category.active{background:#2563eb;color:white;border-color:#2563eb}
+.category small{display:block;margin-top:6px;font-weight:normal}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+button{border:0;padding:12px 17px;border-radius:8px;cursor:pointer;font-weight:bold}
+.download-all{background:#2563eb;color:white}
+.file{background:white;padding:16px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:12px;display:flex;align-items:center;gap:13px}
+.file input{width:18px;height:18px}
+.file-info{flex:1;min-width:0}
+.file-info h3{font-size:16px;overflow-wrap:anywhere}
+.file-info p{font-size:13px;color:#64748b;margin-top:5px}
+.single{background:#eaf1ff;color:#2563eb}
+.empty{text-align:center;padding:35px;background:white;border-radius:12px;color:#64748b}
+footer{text-align:center;padding:30px;color:#64748b}
+@media(max-width:500px){.hero h1{font-size:27px}.file{align-items:flex-start}.single{padding:10px}}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>ToolBox Hub</h2>
+<a href="../index.html">← Home</a>
+</header>
+
+<section class="hero">
+<h1>Download Center</h1>
+<p>Find and download your available files.</p>
+</section>
+
+<main class="container">
+
+<input class="search" id="search" type="search"
+placeholder="Search files..." oninput="renderFiles()">
+
+<div class="categories">
+<div class="category active" data-category="all" onclick="setCategory('all',this)">All Downloads</div>
+<div class="category" data-category="pc" onclick="setCategory('pc',this)">PC Applications</div>
+<div class="category" data-category="mobile" onclick="setCategory('mobile',this)">Mobile Applications</div>
+<div class="category" data-category="movie" onclick="setCategory('movie',this)">Movies</div>
+<div class="category" data-category="anime" onclick="setCategory('anime',this)">Anime</div>
+</div>
+
+<div class="toolbar">
+<strong id="fileCount">Loading files...</strong>
+<button class="download-all" id="downloadSelected" onclick="downloadSelected()">
+Download Selected (0)
+</button>
+</div>
+
+<div id="fileList"></div>
+
+</main>
+
+<footer>
+<p>© <span id="year"></span> ToolBox Hub. All rights reserved.</p>
+</footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+let currentCategory = "all";
+let selectedFiles = new Set();
+
+const files = [];
+
+// Generate all 220 anime episodes
+for (let i = 1; i <= 220; i++) {
+    const filename = `Naruto EP (${i}).mkv`;
+
+    const folder =
+    "../downloads/anime/Naruto Original 220EP 720p/";
+
+    files.push({
+        id: "anime-" + i,
+        name: `Naruto EP (${i})`,
+        category: "anime",
+        type: "MKV",
+        quality: "720p",
+        path: folder + encodeURIComponent(filename)
+    });
+}
+
+function setCategory(category, element) {
+    currentCategory = category;
+
+    document.querySelectorAll(".category").forEach(c => {
+        c.classList.remove("active");
+    });
+
+    element.classList.add("active");
+    renderFiles();
+}
+
+function renderFiles() {
+    const list = document.getElementById("fileList");
+    const search = document.getElementById("search").value.toLowerCase();
+
+    const filtered = files.filter(file => {
+        const categoryMatch =
+            currentCategory === "all" ||
+            file.category === currentCategory;
+
+        const searchMatch =
+            file.name.toLowerCase().includes(search);
+
+        return categoryMatch && searchMatch;
+    });
+
+    document.getElementById("fileCount").textContent =
+        filtered.length + " files found";
+
+    if (filtered.length === 0) {
+        list.innerHTML =
+        '<div class="empty">No files available in this category yet.</div>';
+        updateDownloadButton();
+        return;
+    }
+
+    list.innerHTML = filtered.map(file => `
+        <div class="file">
+            <input type="checkbox"
+                ${selectedFiles.has(file.id) ? "checked" : ""}
+                onchange="toggleFile('${file.id}',this.checked)">
+
+            <div class="file-info">
+                <h3>🎬 ${file.name}</h3>
+                <p>${file.type} • ${file.quality}</p>
+            </div>
+
+            <button class="single"
+                onclick="downloadFile('${file.id}')">
+                Download
+            </button>
+        </div>
+    `).join("");
+
+    updateDownloadButton();
+}
+
+function toggleFile(id, checked) {
+    if (checked) {
+        selectedFiles.add(id);
+    } else {
+        selectedFiles.delete(id);
+    }
+
+    updateDownloadButton();
+}
+
+function updateDownloadButton() {
+    document.getElementById("downloadSelected").textContent =
+        `Download Selected (${selectedFiles.size})`;
+}
+
+function downloadFile(id) {
+    const file = files.find(f => f.id === id);
+    if (!file) return;
+
+    const link = document.createElement("a");
+    link.href = file.path;
+    link.download = file.path.split("/").pop();
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+}
+
+function downloadSelected() {
+    const selected = files.filter(f => selectedFiles.has(f.id));
+
+    if (selected.length === 0) {
+        alert("Please select at least one file.");
+        return;
+    }
+
+    selected.forEach((file, index) => {
+        setTimeout(() => downloadFile(file.id), index * 800);
+    });
+}
+
+renderFiles();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code Generator - ToolBox Hub</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;font-family:Arial,sans-serif;background:#f4f7fb;
+ color:#172033;padding:25px 15px
+}
+.container{
+ max-width:650px;margin:35px auto;background:white;
+ padding:30px;border-radius:16px;
+ box-shadow:0 5px 25px #00000012
+}
+h1{text-align:center;color:#2563eb;margin-top:0}
+p{text-align:center;color:#64748b}
+label{display:block;font-weight:bold;margin:22px 0 8px}
+textarea,input{
+ width:100%;padding:13px;border:1px solid #d6deea;
+ border-radius:8px;font-size:16px
+}
+textarea{height:110px;resize:vertical}
+button{
+ border:0;padding:13px 20px;border-radius:8px;
+ background:#2563eb;color:white;font-size:15px;
+ cursor:pointer;margin-top:15px
+}
+button:hover{background:#1d4ed8}
+.secondary{background:#475569}
+#result{
+ display:flex;justify-content:center;align-items:center;
+ margin:25px auto 10px;min-height:50px
+}
+#result img,#result canvas{max-width:100%;height:auto}
+.back{display:block;text-align:center;margin-top:25px;color:#2563eb;text-decoration:none}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>QR Code Generator</h1>
+<p>Create and download QR codes for free.</p>
+
+<label for="qrText">Enter text or website URL</label>
+<textarea id="qrText" placeholder="https://example.com"></textarea>
+
+<label for="qrSize">QR Code Size</label>
+<select id="qrSize" style="width:100%;padding:12px;border-radius:8px;border:1px solid #d6deea">
+<option value="150">Small (150 × 150)</option>
+<option value="200" selected>Medium (200 × 200)</option>
+<option value="300">Large (300 × 300)</option>
+<option value="400">Extra Large (400 × 400)</option>
+</select>
+
+<button onclick="generateQR()">Generate QR Code</button>
+<button class="secondary" onclick="downloadQR()">Download PNG</button>
+
+<div id="result"></div>
+
+<a class="back" href="../index.html">← Back to ToolBox Hub</a>
+</div>
+
+<script>
+function generateQR(){
+ const text=document.getElementById("qrText").value.trim();
+ const size=Number(document.getElementById("qrSize").value);
+ const result=document.getElementById("result");
+
+ result.innerHTML="";
+
+ if(!text){
+  alert("Please enter some text or a URL.");
+  return;
+ }
+
+ if(typeof QRCode==="undefined"){
+  alert("QR library failed to load. Check your internet connection and reload the page.");
+  return;
+ }
+
+ new QRCode(result,{
+  text:text,
+  width:size,
+  height:size,
+  correctLevel:QRCode.CorrectLevel.H
+ });
+}
+
+function downloadQR(){
+ const result=document.getElementById("result");
+ const canvas=result.querySelector("canvas");
+ const img=result.querySelector("img");
+
+ if(canvas){
+  const link=document.createElement("a");
+  link.href=canvas.toDataURL("image/png");
+  link.download="toolboxhub-qr.png";
+  link.click();
+ }else if(img && img.src){
+  const link=document.createElement("a");
+  link.href=img.src;
+  link.download="toolboxhub-qr.png";
+  link.click();
+ }else{
+  alert("Generate a QR code first.");
+ }
+}
+</script>
+</body>
+</html>

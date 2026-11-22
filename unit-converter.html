@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit Converter - ToolBox Hub</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;padding:25px 15px;
+ font-family:Arial,sans-serif;
+ background:#f3f6fb;color:#172033
+}
+.container{
+ max-width:650px;margin:35px auto;
+ background:white;padding:30px;
+ border-radius:16px;
+ box-shadow:0 5px 25px #0000000c
+}
+h1{text-align:center;color:#2563eb;margin-top:0}
+.subtitle{text-align:center;color:#64748b;margin-bottom:28px}
+label{display:block;font-weight:bold;margin:20px 0 8px}
+select,input{
+ width:100%;padding:13px;
+ border:1px solid #d5deeb;border-radius:8px;
+ font-size:15px;background:white
+}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+button{
+ padding:13px 18px;border:0;border-radius:8px;
+ background:#2563eb;color:white;font-size:15px;
+ cursor:pointer;margin-top:20px
+}
+button:hover{background:#1d4ed8}
+.secondary{background:#475569}
+.result{
+ margin-top:25px;padding:20px;
+ background:#edf4ff;border-radius:12px;text-align:center
+}
+.result small{color:#64748b}
+.result h2{color:#2563eb;font-size:27px;overflow-wrap:anywhere}
+.back{
+ display:block;text-align:center;margin-top:25px;
+ color:#2563eb;text-decoration:none
+}
+@media(max-width:500px){
+ .container{padding:22px}
+ .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Unit Converter</h1>
+<p class="subtitle">Convert length, weight, temperature and volume easily.</p>
+
+<label for="category">Select Category</label>
+<select id="category">
+ <option value="length">Length</option>
+ <option value="weight">Weight</option>
+ <option value="temperature">Temperature</option>
+ <option value="volume">Volume</option>
+</select>
+
+<label for="inputValue">Enter Value</label>
+<input type="number" id="inputValue" placeholder="Enter a number" step="any">
+
+<div class="grid">
+ <div>
+  <label for="fromUnit">From</label>
+  <select id="fromUnit"></select>
+ </div>
+
+ <div>
+  <label for="toUnit">To</label>
+  <select id="toUnit"></select>
+ </div>
+</div>
+
+<button id="swapBtn" class="secondary">⇄ Swap Units</button>
+<button id="clearBtn" class="secondary">Clear</button>
+
+<div class="result">
+ <small>Converted Result</small>
+ <h2 id="result">0</h2>
+ <small id="resultDetails">Enter a value to convert.</small>
+</div>
+
+<a class="back" href="../index.html">← Back to ToolBox Hub</a>
+
+</div>
+
+<script>
+const units={
+ length:{
+  "Metres":1,
+  "Kilometres":1000,
+  "Centimetres":0.01,
+  "Millimetres":0.001,
+  "Miles":1609.344,
+  "Feet":0.3048,
+  "Inches":0.0254
+ },
+ weight:{
+  "Kilograms":1,
+  "Grams":0.001,
+  "Milligrams":0.000001,
+  "Pounds":0.45359237,
+  "Ounces":0.028349523125,
+  "Tonnes":1000
+ },
+ temperature:{
+  "Celsius":"C",
+  "Fahrenheit":"F",
+  "Kelvin":"K"
+ },
+ volume:{
+  "Litres":1,
+  "Millilitres":0.001,
+  "Cubic Metres":1000,
+  "US Gallons":3.785411784,
+  "US Cups":0.2365882365
+ }
+};
+
+const category=document.getElementById("category");
+const inputValue=document.getElementById("inputValue");
+const fromUnit=document.getElementById("fromUnit");
+const toUnit=document.getElementById("toUnit");
+const result=document.getElementById("result");
+const resultDetails=document.getElementById("resultDetails");
+
+function loadUnits(){
+ const selected=units[category.value];
+ const names=Object.keys(selected);
+
+ fromUnit.innerHTML="";
+ toUnit.innerHTML="";
+
+ names.forEach((name,index)=>{
+  fromUnit.add(new Option(name,name));
+  toUnit.add(new Option(name,name));
+ });
+
+ if(names.length>1){
+  toUnit.selectedIndex=1;
+ }
+
+ convert();
+}
+
+function convertTemperature(value,from,to){
+ let celsius;
+
+ if(from==="Celsius")celsius=value;
+ else if(from==="Fahrenheit")celsius=(value-32)*5/9;
+ else celsius=value-273.15;
+
+ if(to==="Celsius")return celsius;
+ if(to==="Fahrenheit")return celsius*9/5+32;
+ return celsius+273.15;
+}
+
+function convert(){
+ const value=inputValue.value;
+
+ if(value.trim()===""||!Number.isFinite(Number(value))){
+  result.textContent="0";
+  resultDetails.textContent="Enter a value to convert.";
+  return;
+ }
+
+ const number=Number(value);
+ const from=fromUnit.value;
+ const to=toUnit.value;
+
+ if(!from||!to)return;
+
+ let answer;
+
+ if(category.value==="temperature"){
+  answer=convertTemperature(number,from,to);
+ }else{
+  const base=number*units[category.value][from];
+  answer=base/units[category.value][to];
+ }
+
+ if(!Number.isFinite(answer)){
+  result.textContent="Invalid result";
+  resultDetails.textContent="";
+  return;
+ }
+
+ const formatted=Number(answer.toPrecision(12)).toLocaleString("en-US",{
+  maximumFractionDigits:10
+ });
+
+ result.textContent=formatted;
+ resultDetails.textContent=number.toLocaleString("en-US")+" "+from+" = "+formatted+" "+to;
+}
+
+category.addEventListener("change",loadUnits);
+inputValue.addEventListener("input",convert);
+fromUnit.addEventListener("change",convert);
+toUnit.addEventListener("change",convert);
+
+document.getElementById("swapBtn").addEventListener("click",()=>{
+ const oldFrom=fromUnit.value;
+ fromUnit.value=toUnit.value;
+ toUnit.value=oldFrom;
+ convert();
+});
+
+document.getElementById("clearBtn").addEventListener("click",()=>{
+ inputValue.value="";
+ result.textContent="0";
+ resultDetails.textContent="Enter a value to convert.";
+});
+
+loadUnits();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Compressor - ToolBox Hub</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;padding:25px 15px;
+ font-family:Arial,sans-serif;
+ background:#f3f6fb;color:#172033
+}
+.container{
+ max-width:850px;margin:30px auto;
+ background:white;padding:30px;
+ border-radius:16px;
+ box-shadow:0 5px 25px #0000000c
+}
+h1{text-align:center;color:#2563eb}
+.subtitle{text-align:center;color:#64748b;margin-bottom:28px}
+.upload{
+ border:2px dashed #a9bddc;
+ border-radius:12px;padding:35px 15px;
+ text-align:center;background:#f8faff;
+ cursor:pointer
+}
+.upload:hover{border-color:#2563eb}
+.upload input{display:none}
+.upload-icon{font-size:40px}
+.upload p{color:#64748b}
+label{display:block;font-weight:bold;margin:22px 0 10px}
+select{
+ width:100%;padding:12px;border:1px solid #d5deeb;
+ border-radius:8px;font-size:15px;background:white
+}
+input[type=range]{width:100%;accent-color:#2563eb}
+.quality-value{text-align:right;color:#2563eb;font-weight:bold}
+button{
+ padding:13px 20px;border:0;border-radius:8px;
+ background:#2563eb;color:white;font-size:15px;
+ cursor:pointer;margin-top:18px
+}
+button:hover{background:#1d4ed8}
+button:disabled{background:#94a3b8;cursor:not-allowed}
+.download{background:#16a34a}
+.download:hover{background:#15803d}
+.preview-grid{
+ display:grid;grid-template-columns:repeat(2,1fr);
+ gap:18px;margin-top:25px
+}
+.preview{
+ border:1px solid #e2e8f0;border-radius:12px;
+ padding:15px;text-align:center;min-width:0
+}
+.preview h3{font-size:16px;margin-top:0}
+.preview img{
+ max-width:100%;max-height:230px;
+ object-fit:contain;border-radius:7px
+}
+.stats{font-size:14px;color:#64748b;margin-top:10px;line-height:1.8}
+#result{margin-top:20px;text-align:center;font-weight:bold}
+.back{
+ display:block;text-align:center;margin-top:25px;
+ color:#2563eb;text-decoration:none
+}
+@media(max-width:550px){
+ .preview-grid{grid-template-columns:1fr}
+ .container{padding:22px}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Image Compressor</h1>
+<p class="subtitle">Compress images and download smaller files for free.</p>
+
+<label class="upload" for="imageInput">
+ <div class="upload-icon">🖼️</div>
+ <h3>Select an Image</h3>
+ <p>Click here to upload JPG, PNG or WebP</p>
+ <input type="file" id="imageInput" accept="image/jpeg,image/png,image/webp">
+</label>
+
+<label for="quality">Compression Quality</label>
+<input type="range" id="quality" min="10" max="100" value="75">
+<div class="quality-value"><span id="qualityValue">75</span>%</div>
+
+<label for="format">Output Format</label>
+<select id="format">
+ <option value="image/jpeg">JPG</option>
+ <option value="image/webp">WebP</option>
+ <option value="image/png">PNG (lossless)</option>
+</select>
+
+<button id="compressBtn" disabled>Compress Image</button>
+<button id="downloadBtn" class="download" disabled>Download Compressed Image</button>
+
+<div id="result"></div>
+
+<div class="preview-grid">
+ <div class="preview">
+  <h3>Original Image</h3>
+  <img id="originalPreview" alt="Original image preview" hidden>
+  <div class="stats" id="originalStats">No image selected</div>
+ </div>
+
+ <div class="preview">
+  <h3>Compressed Image</h3>
+  <img id="compressedPreview" alt="Compressed image preview" hidden>
+  <div class="stats" id="compressedStats">Not compressed yet</div>
+ </div>
+</div>
+
+<a class="back" href="../index.html">← Back to ToolBox Hub</a>
+</div>
+
+<script>
+const imageInput=document.getElementById("imageInput");
+const quality=document.getElementById("quality");
+const qualityValue=document.getElementById("qualityValue");
+const format=document.getElementById("format");
+const compressBtn=document.getElementById("compressBtn");
+const downloadBtn=document.getElementById("downloadBtn");
+const originalPreview=document.getElementById("originalPreview");
+const compressedPreview=document.getElementById("compressedPreview");
+const originalStats=document.getElementById("originalStats");
+const compressedStats=document.getElementById("compressedStats");
+const result=document.getElementById("result");
+
+let originalFile=null;
+let compressedBlob=null;
+let originalURL=null;
+let compressedURL=null;
+let originalImage=null;
+
+function formatSize(bytes){
+ if(bytes<1024)return bytes+" B";
+ if(bytes<1024*1024)return (bytes/1024).toFixed(2)+" KB";
+ return (bytes/(1024*1024)).toFixed(2)+" MB";
+}
+
+quality.addEventListener("input",()=>{
+ qualityValue.textContent=quality.value;
+});
+
+imageInput.addEventListener("change",()=>{
+ const file=imageInput.files[0];
+ if(!file)return;
+
+ if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+  alert("Please select a JPG, PNG or WebP image.");
+  imageInput.value="";
+  return;
+ }
+
+ originalFile=file;
+ compressedBlob=null;
+ downloadBtn.disabled=true;
+ compressBtn.disabled=true;
+ result.textContent="Loading image...";
+
+ if(originalURL)URL.revokeObjectURL(originalURL);
+ if(compressedURL)URL.revokeObjectURL(compressedURL);
+
+ originalURL=URL.createObjectURL(file);
+
+ const img=new Image();
+
+ img.onload=()=>{
+  originalImage=img;
+  originalPreview.src=originalURL;
+  originalPreview.hidden=false;
+  compressedPreview.hidden=true;
+
+  originalStats.innerHTML=
+   "File size: "+formatSize(file.size)+
+   "<br>Dimensions: "+img.width+" × "+img.height;
+
+  compressedStats.textContent="Not compressed yet";
+  compressBtn.disabled=false;
+  result.textContent="";
+ };
+
+ img.onerror=()=>{
+  result.textContent="Could not load this image.";
+ };
+
+ img.src=originalURL;
+});
+
+compressBtn.addEventListener("click",()=>{
+ if(!originalImage||!originalFile)return;
+
+ result.textContent="Compressing...";
+
+ const canvas=document.createElement("canvas");
+ canvas.width=originalImage.naturalWidth;
+ canvas.height=originalImage.naturalHeight;
+
+ const ctx=canvas.getContext("2d");
+ const selectedFormat=format.value;
+
+ if(selectedFormat==="image/jpeg"){
+  ctx.fillStyle="#ffffff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+ }
+
+ ctx.drawImage(originalImage,0,0);
+
+ const selectedQuality=Number(quality.value)/100;
+
+ canvas.toBlob(blob=>{
+  if(!blob){
+   result.textContent="Compression failed. Try another format.";
+   return;
+  }
+
+  compressedBlob=blob;
+
+  if(compressedURL)URL.revokeObjectURL(compressedURL);
+  compressedURL=URL.createObjectURL(blob);
+
+  compressedPreview.src=compressedURL;
+  compressedPreview.hidden=false;
+
+  const difference=originalFile.size-blob.size;
+  const percentage=(difference/originalFile.size)*100;
+
+  compressedStats.innerHTML=
+   "File size: "+formatSize(blob.size)+
+   "<br>Dimensions: "+canvas.width+" × "+canvas.height;
+
+  if(difference>0){
+   result.textContent="Success! Image size reduced by "+percentage.toFixed(1)+"%.";
+  }else if(difference===0){
+   result.textContent="Compressed image has the same file size.";
+  }else{
+   result.textContent="The new image is larger. Try another format or quality.";
+  }
+
+  downloadBtn.disabled=false;
+
+ },selectedFormat,selectedFormat==="image/png"?undefined:selectedQuality);
+});
+
+downloadBtn.addEventListener("click",()=>{
+ if(!compressedBlob)return;
+
+ const extension={
+  "image/jpeg":"jpg",
+  "image/png":"png",
+  "image/webp":"webp"
+ }[compressedBlob.type]||"png";
+
+ const link=document.createElement("a");
+ link.href=compressedURL;
+ link.download="toolboxhub-compressed."+extension;
+ link.click();
+});
+</script>
+</body>
+</html>

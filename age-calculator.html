@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Age Calculator - ToolBox Hub</title>
+<meta name="description" content="Calculate your exact age in years, months and days for free.">
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:25px 16px;font-family:Arial,sans-serif;background:#f5f7fb;color:#182235}
+.container{max-width:760px;margin:35px auto}
+.back{color:#3977ed;text-decoration:none;font-weight:bold}
+h1{font-size:32px;margin:30px 0 8px}
+.description{color:#758198;margin-bottom:25px}
+.calculator{background:white;padding:28px;border:1px solid #e5eaf1;border-radius:16px}
+label{display:block;font-weight:bold;margin-bottom:10px}
+input{width:100%;padding:14px;border:1px solid #cbd5e1;border-radius:9px;font-size:16px;margin-bottom:18px}
+button{background:#3977ed;color:white;border:0;padding:14px 24px;border-radius:9px;font-size:15px;font-weight:bold;cursor:pointer}
+button:hover{background:#245cc4}
+.result{display:none;margin-top:25px}
+.result h2{font-size:20px;margin-bottom:15px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stat{background:#edf3ff;padding:20px 10px;border-radius:12px;text-align:center}
+.number{display:block;font-size:28px;font-weight:bold;color:#3977ed}
+.label{font-size:13px;color:#65728a}
+.extra{margin-top:18px;background:#f5f7fb;padding:16px;border-radius:10px;line-height:2}
+.error{color:#dc2626;margin-top:15px;font-size:14px}
+@media(max-width:500px){.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<a href="../index.html" class="back">← Back to ToolBox Hub</a>
+
+<h1>Age Calculator</h1>
+<p class="description">Calculate your exact age in years, months and days.</p>
+
+<div class="calculator">
+
+<label for="birthDate">Enter your date of birth</label>
+<input type="date" id="birthDate">
+
+<button onclick="calculateAge()">Calculate My Age</button>
+
+<p class="error" id="error"></p>
+
+<div class="result" id="result">
+<h2>Your Age</h2>
+
+<div class="stats">
+<div class="stat">
+<span class="number" id="years">0</span>
+<span class="label">Years</span>
+</div>
+
+<div class="stat">
+<span class="number" id="months">0</span>
+<span class="label">Months</span>
+</div>
+
+<div class="stat">
+<span class="number" id="days">0</span>
+<span class="label">Days</span>
+</div>
+</div>
+
+<div class="extra">
+<div>Total months: <strong id="totalMonths">0</strong></div>
+<div>Total days: <strong id="totalDays">0</strong></div>
+<div>Next birthday in: <strong id="birthday">0 days</strong></div>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+const dateInput = document.getElementById("birthDate");
+
+// Prevent selecting a future date
+const today = new Date();
+const todayString = [
+    today.getFullYear(),
+    String(today.getMonth()+1).padStart(2,"0"),
+    String(today.getDate()).padStart(2,"0")
+].join("-");
+
+dateInput.max = todayString;
+
+function calculateAge(){
+
+    const value = dateInput.value;
+    const error = document.getElementById("error");
+    const result = document.getElementById("result");
+
+    error.textContent = "";
+    result.style.display = "none";
+
+    if(!value){
+        error.textContent = "Please enter your date of birth.";
+        return;
+    }
+
+    const [year, month, day] = value.split("-").map(Number);
+
+    const birth = new Date(year, month-1, day);
+    const now = new Date();
+    const currentDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    if(birth > currentDate){
+        error.textContent = "Date of birth cannot be in the future.";
+        return;
+    }
+
+    let years = currentDate.getFullYear() - year;
+    let months = currentDate.getMonth() - (month-1);
+    let days = currentDate.getDate() - day;
+
+    if(days < 0){
+        months--;
+        const previousMonthDays = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth(),
+            0
+        ).getDate();
+
+        days += previousMonthDays;
+    }
+
+    if(months < 0){
+        years--;
+        months += 12;
+    }
+
+    const totalDays = Math.floor(
+        (currentDate - birth) / 86400000
+    );
+
+    const totalMonths = years * 12 + months;
+
+    let nextBirthdayYear = currentDate.getFullYear();
+
+    let nextBirthday = new Date(
+        nextBirthdayYear,
+        month-1,
+        day
+    );
+
+    // Handle birthdays such as February 29
+    if(nextBirthday.getMonth() !== month-1){
+        nextBirthday = new Date(nextBirthdayYear, month, 0);
+    }
+
+    if(nextBirthday < currentDate){
+        nextBirthdayYear++;
+        nextBirthday = new Date(
+            nextBirthdayYear,
+            month-1,
+            day
+        );
+
+        if(nextBirthday.getMonth() !== month-1){
+            nextBirthday = new Date(nextBirthdayYear, month, 0);
+        }
+    }
+
+    const birthdayDays = Math.round(
+        (nextBirthday - currentDate) / 86400000
+    );
+
+    document.getElementById("years").textContent = years;
+    document.getElementById("months").textContent = months;
+    document.getElementById("days").textContent = days;
+
+    document.getElementById("totalMonths").textContent = totalMonths;
+    document.getElementById("totalDays").textContent = totalDays;
+    document.getElementById("birthday").textContent =
+        birthdayDays === 0 ? "Today!" : birthdayDays + " days";
+
+    result.style.display = "block";
+}
+</script>
+</body>
+</html>

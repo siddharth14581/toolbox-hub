@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Percentage Calculator - ToolBox Hub</title>
+<meta name="description" content="Free online percentage calculator. Calculate percentages, increases and decreases.">
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:30px 16px;font-family:Arial,sans-serif;background:#f4f7fb;color:#202938}
+.container{max-width:850px;margin:25px auto}
+.back{color:#2563eb;text-decoration:none;font-weight:bold}
+h1{margin:25px 0 8px;font-size:32px}
+.description{color:#64748b;margin-bottom:28px}
+.calculator{background:white;padding:24px;border-radius:14px;margin-bottom:18px;border:1px solid #e2e8f0}
+h2{font-size:19px;margin-top:0}
+.inputs{display:flex;gap:12px;flex-wrap:wrap}
+input{flex:1;min-width:130px;padding:13px;border:1px solid #cbd5e1;border-radius:8px;font-size:16px;width:100%}
+button{background:#2563eb;color:white;border:0;padding:12px 20px;border-radius:8px;cursor:pointer;font-size:15px;margin-top:14px}
+button:hover{background:#1d4ed8}
+.result{margin-top:16px;padding:14px;background:#eff6ff;border-radius:8px;color:#1d4ed8;font-weight:bold;min-height:45px}
+@media(max-width:550px){.inputs{flex-direction:column}}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<a class="back" href="../index.html">← Back to ToolBox Hub</a>
+
+<h1>Percentage Calculator</h1>
+<p class="description">Calculate percentages quickly and easily.</p>
+
+<div class="calculator">
+<h2>1. Calculate X% of a number</h2>
+<div class="inputs">
+<input type="number" id="p1" placeholder="Percentage (%)">
+<input type="number" id="n1" placeholder="Enter number">
+</div>
+<button onclick="calculateOne()">Calculate</button>
+<div class="result" id="r1">Your result will appear here.</div>
+</div>
+
+<div class="calculator">
+<h2>2. What percentage is X of Y?</h2>
+<div class="inputs">
+<input type="number" id="p2" placeholder="Enter X">
+<input type="number" id="n2" placeholder="Enter Y">
+</div>
+<button onclick="calculateTwo()">Calculate</button>
+<div class="result" id="r2">Your result will appear here.</div>
+</div>
+
+<div class="calculator">
+<h2>3. Percentage increase</h2>
+<div class="inputs">
+<input type="number" id="old1" placeholder="Original value">
+<input type="number" id="new1" placeholder="New value">
+</div>
+<button onclick="calculateThree()">Calculate</button>
+<div class="result" id="r3">Your result will appear here.</div>
+</div>
+
+<div class="calculator">
+<h2>4. Percentage decrease</h2>
+<div class="inputs">
+<input type="number" id="old2" placeholder="Original value">
+<input type="number" id="new2" placeholder="New value">
+</div>
+<button onclick="calculateFour()">Calculate</button>
+<div class="result" id="r4">Your result will appear here.</div>
+</div>
+
+</div>
+
+<script>
+function get(id){
+return Number(document.getElementById(id).value);
+}
+
+function show(id,text){
+document.getElementById(id).textContent=text;
+}
+
+function valid(ids){
+return ids.every(id=>document.getElementById(id).value.trim()!=="");
+}
+
+function calculateOne(){
+if(!valid(["p1","n1"])){
+show("r1","Please enter both values.");
+return;
+}
+show("r1","Result: "+(get("p1")/100*get("n1")));
+}
+
+function calculateTwo(){
+if(!valid(["p2","n2"])||get("n2")===0){
+show("r2","Enter valid values. Y cannot be zero.");
+return;
+}
+show("r2","Result: "+(get("p2")/get("n2")*100).toFixed(2)+"%");
+}
+
+function calculateThree(){
+if(!valid(["old1","new1"])||get("old1")===0){
+show("r3","Enter valid values. Original value cannot be zero.");
+return;
+}
+show("r3","Increase: "+((get("new1")-get("old1"))/get("old1")*100).toFixed(2)+"%");
+}
+
+function calculateFour(){
+if(!valid(["old2","new2"])||get("old2")===0){
+show("r4","Enter valid values. Original value cannot be zero.");
+return;
+}
+show("r4","Decrease: "+((get("old2")-get("new2"))/get("old2")*100).toFixed(2)+"%");
+}
+</script>
+</body>
+</html>

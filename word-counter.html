@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free online word counter. Count words, characters, sentences and paragraphs instantly.">
+    <title>Free Word Counter - ToolBox Hub</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 16px;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #202938;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 30px auto;
+        }
+
+        .back {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            font-size: 32px;
+        }
+
+        .description {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 260px;
+            padding: 18px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 16px;
+            resize: vertical;
+            outline: none;
+            font-family: Arial, sans-serif;
+        }
+
+        textarea:focus {
+            border-color: #2563eb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .stat {
+            background: white;
+            padding: 20px 10px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .number {
+            display: block;
+            font-size: 27px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 7px;
+        }
+
+        .label {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .copy {
+            background: #2563eb;
+            color: white;
+        }
+
+        .clear {
+            background: #e2e8f0;
+            color: #202938;
+        }
+
+        @media (max-width: 600px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <a class="back" href="../index.html">← Back to ToolBox Hub</a>
+
+        <h1>Word Counter</h1>
+        <p class="description">
+            Count words, characters, sentences and paragraphs instantly.
+        </p>
+
+        <textarea id="textInput"
+            placeholder="Start typing or paste your text here..."></textarea>
+
+        <div class="stats">
+
+            <div class="stat">
+                <span class="number" id="words">0</span>
+                <span class="label">Words</span>
+            </div>
+
+            <div class="stat">
+                <span class="number" id="characters">0</span>
+                <span class="label">Characters</span>
+            </div>
+
+            <div class="stat">
+                <span class="number" id="noSpaces">0</span>
+                <span class="label">Without Spaces</span>
+            </div>
+
+            <div class="stat">
+                <span class="number" id="sentences">0</span>
+                <span class="label">Sentences</span>
+            </div>
+
+            <div class="stat">
+                <span class="number" id="paragraphs">0</span>
+                <span class="label">Paragraphs</span>
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <button class="copy" onclick="copyText()">Copy Text</button>
+            <button class="clear" onclick="clearText()">Clear Text</button>
+        </div>
+
+    </div>
+
+    <script>
+        const input = document.getElementById("textInput");
+
+        function updateCounts() {
+            const text = input.value;
+
+            const trimmed = text.trim();
+
+            const words = trimmed
+                ? trimmed.split(/\s+/).length
+                : 0;
+
+            const characters = text.length;
+
+            const noSpaces = text.replace(/\s/g, "").length;
+
+            const sentences = trimmed
+                ? (trimmed.match(/[.!?]+(?=\s|$)/g) || []).length
+                : 0;
+
+            const paragraphs = trimmed
+                ? trimmed.split(/\n\s*\n/).filter(p => p.trim()).length
+                : 0;
+
+            document.getElementById("words").textContent = words;
+            document.getElementById("characters").textContent = characters;
+            document.getElementById("noSpaces").textContent = noSpaces;
+            document.getElementById("sentences").textContent = sentences;
+            document.getElementById("paragraphs").textContent = paragraphs;
+        }
+
+        input.addEventListener("input", updateCounts);
+
+        function clearText() {
+            input.value = "";
+            updateCounts();
+            input.focus();
+        }
+
+        async function copyText() {
+            if (!input.value) {
+                alert("There is no text to copy.");
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(input.value);
+                alert("Text copied successfully!");
+            } catch (error) {
+                alert("Copy failed. Please select and copy the text manually.");
+            }
+        }
+    </script>
+</body>
+</html>
